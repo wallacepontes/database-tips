@@ -159,13 +159,9 @@ Optional Learning -
 5. Learn Data Lakes
 
 ## Video
-* [NoSQL Database Tutorial – Full Course for Beginners](https://www.youtube.com/watch?v=xh4gy1lbL2k)
-	> [<img src="https://img.youtube.com/vi/xh4gy1lbL2k/0.jpg" width="200">](https://www.youtube.com/watch?v=xh4gy1lbL2k "NoSQL Database Tutorial – Full Course for Beginners by freeCodeCamp.org 821,555 views 2 hours, 54 minutes")
+
  * [Apache Cassandra (NoSQL de Gente Grande e que Paga Muito Bem) // Dicionário do Programador](https://www.youtube.com/watch?v=4pgdLCu-8zs)
 	> [<img src="https://img.youtube.com/vi/4pgdLCu-8zs/0.jpg" width="200">](https://www.youtube.com/watch?v=4pgdLCu-8zs "Apache Cassandra (NoSQL de Gente Grande e que Paga Muito Bem) // Dicionário do Programador by Código Fonte TV 18,407 views 16 minutes")
- * [Apache Cassandra (NoSQL de Gente Grande e que Paga Muito Bem) // Dicionário do Programador](https://www.youtube.com/watch?v=4pgdLCu-8zs)
-	> [<img src="https://img.youtube.com/vi/4pgdLCu-8zs/0.jpg" width="200">](https://www.youtube.com/watch?v=4pgdLCu-8zs "Apache Cassandra (NoSQL de Gente Grande e que Paga Muito Bem) // Dicionário do Programador by Código Fonte TV 18,407 views 16 minutes")
- * [Apache Cassandra Database – Full Course for Beginners](https://www.youtube.com/watch?v=J-cSy5MeMOA)
-	> [<img src="https://img.youtube.com/vi/J-cSy5MeMOA/0.jpg" width="200">](https://www.youtube.com/watch?v=J-cSy5MeMOA "Apache Cassandra Database – Full Course for Beginners by freeCodeCamp.org 250,408 views 1 hour, 8 minutes")
+
  * [SQL vs. NoSQL Explained (in 4 Minutes)](https://www.youtube.com/watch?v=_Ss42Vb1SU4)
 	> [<img src="https://img.youtube.com/vi/_Ss42Vb1SU4/0.jpg" width="200">](https://www.youtube.com/watch?v=_Ss42Vb1SU4 "I don't know but as a beginner I have noticed many of these videos LACK the most important sauce : ACTUAL USE CASES! If you would have featured examples like let's say you're building an app that does this or that for you might want to use SQL for this part of the scope BECAUSE etc... and for that part of the scope NoSQL might be preferred because etc.... There you go, I have just shared a framework for your next video lol. Thank you anyway for the content it shows the genuine interest to educate but could be better especially if you want to educate beginners. by Exponent 130K views 4 minutes")
