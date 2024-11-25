@@ -3,30 +3,20 @@
 ## Table of Contents
 - [How to import and export data](#how-to-import-and-export-data)
   - [Table of Contents](#table-of-contents)
-  - [Peer-to-peer architecture](#peer-to-peer-architecture)
-  - [Check the replication factor and consistency settings in Cassandra](#check-the-replication-factor-and-consistency-settings-in-cassandra)
-  - [For a high-performance data migration into Cassandra](#for-a-high-performance-data-migration-into-cassandra)
-  - [Tools for importing and exporting data](#tools-for-importing-and-exporting-data)
-    - [1. **Cassandra Query Language Shell (CQLSH)**](#1-cassandra-query-language-shell-cqlsh)
-    - [2. **DataStax Bulk Loader (DSBulk)**](#2-datastax-bulk-loader-dsbulk)
-    - [3. **Spark with Cassandra Connector**](#3-spark-with-cassandra-connector)
-    - [4. **Third-party Tools**](#4-third-party-tools)
-  - [To upload data into a Cassandra database after generating stage tables](#to-upload-data-into-a-cassandra-database-after-generating-stage-tables)
-    - [1. **Cassandra Query Language Shell (CQLSH) - COPY Command**](#1-cassandra-query-language-shell-cqlsh---copy-command)
-    - [2. **DataStax Bulk Loader (DSBulk)**](#2-datastax-bulk-loader-dsbulk-1)
-    - [3. **Apache Spark with Cassandra Connector**](#3-apache-spark-with-cassandra-connector)
-    - [4. **ETL Tools (Talend, Pentaho, Apache Nifi)**](#4-etl-tools-talend-pentaho-apache-nifi)
-    - [5. **Custom Scripts Using Cassandra Drivers**](#5-custom-scripts-using-cassandra-drivers)
-    - [6. **Kafka and Cassandra Integration**](#6-kafka-and-cassandra-integration)
-    - [Conclusion:](#conclusion)
+  - [Architecture Overview](#architecture-overview)
+    - [Peer-to-peer architecture](#peer-to-peer-architecture)
+    - [Check the replication factor and consistency settings in Cassandra](#check-the-replication-factor-and-consistency-settings-in-cassandra)
+    - [For a high-performance data migration into Cassandra](#for-a-high-performance-data-migration-into-cassandra)
+    - [Tools for importing and exporting data](#tools-for-importing-and-exporting-data)
+    - [To upload data into a Cassandra database after generating stage tables](#to-upload-data-into-a-cassandra-database-after-generating-stage-tables)
   - [CQLSH (Cassandra Query Language Shell):](#cqlsh-cassandra-query-language-shell)
     - [Export data from a table in your Cassandra container](#export-data-from-a-table-in-your-cassandra-container)
     - [Error indicates that the `/data` directory doesn't exist](#error-indicates-that-the-data-directory-doesnt-exist)
     - [Copy the File from the Container to the Host](#copy-the-file-from-the-container-to-the-host)
-    - [The --rm flag tells Docker to automatically remove the container when it stops](#the---rm-flag-tells-docker-to-automatically-remove-the-container-when-it-stops)
-    - [LOAD DATA WITH CQLSH \[1\]](#load-data-with-cqlsh-1)
-  - [DataStax Bulk Loader (DSBulk):](#datastax-bulk-loader-dsbulk)
+  - [DataStax Bulk Loader (DSBulk)](#datastax-bulk-loader-dsbulk)
+    - [How to install](#how-to-install)
     - [the `datastax/dsbulk` image](#the-datastaxdsbulk-image)
+    - [Confirm Port Accessibility](#confirm-port-accessibility)
   - [Use Cassandra Bulk Loader (cassandra-loader or sstableloader)](#use-cassandra-bulk-loader-cassandra-loader-or-sstableloader)
   - [Spring Batch and Spring Data for Apache Cassandra](#spring-batch-and-spring-data-for-apache-cassandra)
     - [Steps to Insert Data into Cassandra using Spring Batch](#steps-to-insert-data-into-cassandra-using-spring-batch)
@@ -34,8 +24,12 @@
   - [Kafka and Cassandra Integration: Apache Kafka as an intermediary between the stage tables and Cassandra could be an option.](#kafka-and-cassandra-integration-apache-kafka-as-an-intermediary-between-the-stage-tables-and-cassandra-could-be-an-option)
   - [Decrypt your encrypted data in Cassandra](#decrypt-your-encrypted-data-in-cassandra)
   - [Moving unencrypted data from a legacy system into Cassandra](#moving-unencrypted-data-from-a-legacy-system-into-cassandra)
+  - [Videos](#videos)
+  - [References](#references)
 
-## Peer-to-peer architecture
+## Architecture Overview
+
+### Peer-to-peer architecture
 
 You can load data into one pod in Cassandra, and the other pods should automatically sync through Cassandra’s replication mechanism, depending on your cluster’s configuration. Cassandra uses a peer-to-peer architecture, meaning each node (or pod) can replicate data across the cluster to ensure consistency.
 To confirm this setup will work seamlessly:
@@ -45,7 +39,7 @@ To confirm this setup will work seamlessly:
 
 If your replication factor and consistency level are set correctly, loading data into one pod should indeed propagate it across the others as designed by the Cassandra engine.
 
-## Check the replication factor and consistency settings in Cassandra
+### Check the replication factor and consistency settings in Cassandra
 
 To check the replication factor and consistency settings in Cassandra, you can use **CQL (Cassandra Query Language)**. Here’s a step-by-step guide:
 
@@ -104,7 +98,7 @@ You can find the consistency level in your application’s configuration if you�
 > - Set **NetworkTopologyStrategy** with appropriate replication factors for each data center if your setup is multi-data center.
 > - Use **QUORUM** for a balanced approach between availability and consistency.
 
-## For a high-performance data migration into Cassandra
+### For a high-performance data migration into Cassandra
 
 For a high-performance data migration into Cassandra, consider these options based on factors like data volume, consistency needs, and cluster configuration:
 
@@ -152,7 +146,7 @@ Recommendations for High Performance
 
 Each method has its strengths, so choosing depends on the volume and frequency of your migration needs. Let me know if you want more detail on any of these approaches!
 
-## Tools for importing and exporting data
+### Tools for importing and exporting data
 
 Apache Cassandra has several tools that can be used for importing and exporting data. Here are a few common ones:
 
@@ -180,7 +174,7 @@ Each of these tools has its use case, with CQLSH being easy for small-scale oper
 
 Yes, there are several tools and approaches to **import/export data** from CSV files to **Cassandra**. Some popular ones include:
 
-### 1. **Cassandra Query Language Shell (CQLSH)**
+1. **Cassandra Query Language Shell (CQLSH)**
    - **CQLSH** provides a built-in command called `COPY`, which allows you to import/export data from/to CSV files.
    - **Importing data** from a CSV file into Cassandra:
      ```bash
@@ -194,7 +188,7 @@ Yes, there are several tools and approaches to **import/export data** from CSV f
    **Pros**: It's simple to use directly from the command line without needing additional tools.
    **Cons**: Limited for handling large datasets, as it might run into performance issues or timeouts.
 
-### 2. **DataStax Bulk Loader (DSBulk)**
+2. **DataStax Bulk Loader (DSBulk)**
    - **DSBulk** is a more robust tool designed by **DataStax** for high-performance bulk data loading and unloading in and out of Cassandra.
    - It supports CSV files and can handle very large datasets more efficiently than CQLSH.
    - **Importing data** from CSV to Cassandra:
@@ -209,14 +203,14 @@ Yes, there are several tools and approaches to **import/export data** from CSV f
    **Pros**: Handles large datasets efficiently with more control over batching and parallelism.
    **Cons**: Requires installation of the DSBulk tool, but it’s relatively easy to set up.
 
-### 3. **Spark with Cassandra Connector**
+3. **Spark with Cassandra Connector**
    - If you are dealing with large-scale data processing, you can use **Apache Spark** with the **Cassandra Connector** to read/write data between CSV and Cassandra.
    - You can load a CSV file into a Spark DataFrame, process it, and then write it to a Cassandra table.
 
    **Pros**: Powerful for data transformations and large-scale operations.
    **Cons**: Requires setup of Spark and is overkill for smaller or simpler tasks.
 
-### 4. **Third-party Tools**
+4. **Third-party Tools**
    - There are other third-party tools like **Talend**, **Pentaho**, or **Apache Nifi** that can be used to build ETL (Extract, Transform, Load) pipelines, including reading from CSV files and writing to Cassandra.
    - These tools offer drag-and-drop interfaces to build complex workflows for data integration.
 
@@ -225,11 +219,11 @@ Yes, there are several tools and approaches to **import/export data** from CSV f
 
 If you are looking for an easy option for small to medium data, **CQLSH COPY** and **DSBulk** would be the best choices. For larger datasets or complex data transformations, Spark or third-party ETL tools may be more suitable.
 
-## To upload data into a Cassandra database after generating stage tables
+### To upload data into a Cassandra database after generating stage tables
 
 To upload data into a **Cassandra** database after generating stage tables using a PL/SQL procedure, there are several alternatives you can consider for efficiently loading the data into Cassandra. These alternatives can range from tools that handle bulk loading to writing custom scripts. Here are some of the most effective options:
 
-### 1. **Cassandra Query Language Shell (CQLSH) - COPY Command**
+1. **Cassandra Query Language Shell (CQLSH) - COPY Command**
    - If your stage tables can be exported as **CSV files**, you can use the `COPY` command in **CQLSH** to import CSV data into Cassandra. This is one of the simplest methods to load data.
    - **Steps**:
      1. Export the PL/SQL stage tables to CSV format.
@@ -239,7 +233,7 @@ To upload data into a **Cassandra** database after generating stage tables using
         ```
    - **Limitations**: It may not be ideal for large datasets due to performance constraints.
 
-### 2. **DataStax Bulk Loader (DSBulk)**
+2. **DataStax Bulk Loader (DSBulk)**
    - **DSBulk** is a high-performance tool designed specifically for importing/exporting data into/from Cassandra. It handles large datasets more efficiently than the `COPY` command.
    - **Steps**:
      1. Export the PL/SQL tables to CSV.
@@ -249,7 +243,7 @@ To upload data into a **Cassandra** database after generating stage tables using
         ```
    - **Advantages**: Can handle parallel processing, batching, and large datasets better than CQLSH.
 
-### 3. **Apache Spark with Cassandra Connector**
+3. **Apache Spark with Cassandra Connector**
    - For complex transformations or large-scale data migration, you can use **Apache Spark** with the **Cassandra Connector**. Spark can load the data from your staging tables and write it directly to Cassandra.
    - **Steps**:
      1. Use a **Spark job** to read the data from your stage tables (via JDBC, for example).
@@ -261,7 +255,7 @@ To upload data into a **Cassandra** database after generating stage tables using
        df.write.format("org.apache.spark.sql.cassandra").options(Map("keyspace" -> "keyspace_name", "table" -> "table_name")).save()
        ```
 
-### 4. **ETL Tools (Talend, Pentaho, Apache Nifi)**
+4. **ETL Tools (Talend, Pentaho, Apache Nifi)**
    - These are comprehensive ETL (Extract, Transform, Load) tools that can automate the process of reading from your relational stage tables and writing to Cassandra.
    - **Steps**:
      1. Configure a connection to your Oracle/PLSQL database to read the stage tables.
@@ -271,7 +265,7 @@ To upload data into a **Cassandra** database after generating stage tables using
    - **Advantages**: These tools offer user-friendly interfaces and can handle complex data flows and transformations. They are also scalable for large datasets.
    - **Limitations**: They may require additional setup and have a learning curve.
 
-### 5. **Custom Scripts Using Cassandra Drivers**
+5. **Custom Scripts Using Cassandra Drivers**
    - You can also write custom scripts in languages like **Java**, **Python**, or **Node.js** using the appropriate **Cassandra drivers**.
    - **Steps**:
      1. Use your preferred language to connect to the Oracle database and fetch the data from the stage tables.
@@ -289,7 +283,7 @@ To upload data into a **Cassandra** database after generating stage tables using
    - **Advantages**: Full control over the process and can handle custom logic for data migration.
    - **Limitations**: Requires development time and can be complex to manage for large datasets.
 
-### 6. **Kafka and Cassandra Integration**
+6. **Kafka and Cassandra Integration**
    - If you're dealing with streaming data or need a scalable, real-time data pipeline, using **Apache Kafka** as an intermediary between the stage tables and Cassandra could be an option.
    - **Steps**:
      1. Export data from PL/SQL to Kafka topics.
@@ -298,7 +292,7 @@ To upload data into a **Cassandra** database after generating stage tables using
    - **Advantages**: This method is highly scalable and can handle real-time data migration.
    - **Limitations**: It’s more complex to set up and configure compared to the other options.
 
-### Conclusion:
+**Conclusion:**
 The best choice depends on the volume of data, the complexity of the migration, and whether you need real-time processing or batch loading. For simple and small-to-medium datasets, **CQLSH** or **DSBulk** is ideal. For more complex or large-scale migrations, **Apache Spark**, **ETL tools**, or **custom scripts** are better suited.
 
 ## CQLSH (Cassandra Query Language Shell):
@@ -438,80 +432,73 @@ This command will copy `student.csv` from the container to the specified directo
 
 After this, `student.csv` should be available on your Windows machine under `C:\cassandra_data`. This method is straightforward and doesn’t require mounting directories or restarting containers.
 
-###  The --rm flag tells Docker to automatically remove the container when it stops
+## DataStax Bulk Loader (DSBulk)
 
-You're correct. The `--rm` flag tells Docker to automatically remove the container when it stops, which means any data inside the container is lost unless you've configured persistent storage.
+**What is DSBulk?**
 
-To retain your Cassandra data across restarts, you can set up **persistent volumes**. This way, your keyspace, tables, and data will persist even if the container is stopped or removed. Here’s how:
-
-**Step 1.** Start Cassandra with a Persistent Volume
-
-1. Choose or create a directory on your host to store Cassandra data. For example, on Windows, you might use `C:\cassandra_data`.
-
-2. Run Cassandra with a volume mapped to the data directory in the container:
-
-   ```bash
-   docker run -d --name cassandra_container -v C:\cassandra_data:/var/lib/cassandra cassandra
-   ```
-
-   - `-d`: Runs the container in detached mode.
-   - `--name cassandra_container`: Assigns a name to the container so you can refer to it easily.
-   - `-v C:\cassandra_data:/var/lib/cassandra`: Maps `C:\cassandra_data` on your host to `/var/lib/cassandra` in the container, where Cassandra stores its data files.
-
-**Step 2.** Verify Data Persistence
-
-Now, if you stop or remove the container, the data will persist in `C:\cassandra_data`. When you restart Cassandra, it will use the data stored in this directory:
-
-1. **Stop the container**:
-
-   ```bash
-   docker stop cassandra_container
-   ```
-
-2. **Restart the container** without data loss:
-
-   ```bash
-   docker start cassandra_container
-   ```
-
-This setup ensures your keyspace, tables, and data are retained between container restarts or recreations. Let me know if you have questions on configuring or working with this setup!
-
-### LOAD DATA WITH CQLSH [[1]](https://cassandra.apache.org/_/quickstart.html)
-
-The CQL shell, or cqlsh, is one tool to use in interacting with the database. We’ll use it to load some data into the database using the script you just saved.
-
-```cmd
-docker run --rm --network cassandra -v "$(pwd)/data.cql:/scripts/data.cql" -e CQLSH_HOST=cassandra -e CQLSH_PORT=9042 -e CQLVERSION=3.4.6 nuvo/docker-cqlsh
-```
-
-> Note: The cassandra server itself (the first docker run command you ran) takes a few seconds to start up. The above command will throw an error if the server hasn’t finished its init sequence yet, so give it a few seconds to spin up.
-
-This command doesn't mencioned the stop and remove the current container.
-
-You’re correct; the command given on the Cassandra site is meant to **run cqlsh in a separate container temporarily** and connect it to the Cassandra container that’s already running. The command uses the `--rm` flag, which ensures that this additional container is removed automatically after it finishes executing. You don't need to stop or remove your Cassandra server container to use this command.
-
-Here’s a breakdown of what each part of this command does:
-
-- `docker run --rm` creates a temporary container that will be removed after it exits.
-- `--network cassandra` connects to a Docker network named `cassandra`. This network should already exist and should include the Cassandra container.
-- `-v "$(pwd)/data.cql:/scripts/data.cql"` mounts the `data.cql` script file from your current directory (`$(pwd)`) into the container’s `/scripts/data.cql`.
-- `-e CQLSH_HOST=cassandra` and `-e CQLSH_PORT=9042` set environment variables for the `cqlsh` command to connect to the host (`cassandra`) and port (`9042`) of the Cassandra container.
-- `-e CQLVERSION=3.4.6` specifies the CQL version to be used.
-
-The command runs `nuvo/docker-cqlsh`, which is a Docker image containing `cqlsh`. This allows you to execute CQL commands from a script or interact with Cassandra without needing `cqlsh` installed locally. 
-
->**Notes:**
->
->1. **Ensure the Cassandra container is fully up and running** before running this command to avoid connection issues.
->2. **No need to stop/remove the Cassandra container** – this command only creates a temporary container to run `cqlsh` and is independent of the Cassandra server container.
-
-
-## DataStax Bulk Loader (DSBulk):
-
-- DSBulk is a more advanced tool provided by DataStax that allows efficient import and export of data at scale.
-  - Export: dsbulk unload -k keyspace_name -t table_name -url file_path
-  - Import: dsbulk load -k keyspace_name -t table_name -url file_path
+- A powerful tool for moving data to/from Cassandra and files in the system.
 - Supports CSV, JSON, and other formats, and it’s highly optimized for handling large amounts of data.
+- Operates via a command-line interface.
+- Designed as a "Customer First" feature for DataStax Enterprise (DSE) users.
+
+DSBulk is essentially an advanced, high-performance import tool specifically built for DSE, making it an ideal fit for our data migration project. This command-line interface tool simplifies bulk data operations, making it efficient for scheduled jobs, such as cron jobs. It was created with the intent to streamline the process of getting data in and out of the database, overcoming the limitations of previous tools.
+
+- Export: dsbulk unload -k keyspace_name -t table_name -url file_path
+- Import: dsbulk load -k keyspace_name -t table_name -url file_path
+
+**Why DSBulk?**
+
+- Loading large volumes of data into DSE has traditionally been challenging.
+- Unloading data was also a requirement.
+- Previous tools had limitations:
+  - `CQLSH COPY FROM` was not performant or robust for large datasets.
+  - `SSTableLoader` required data in SSTable format, complicating data transfer.
+  - `cassandra loader` was not formally supported.
+
+**DSBulk Use Cases**
+
+- **Loading Data from Multiple Files:** Often, data from sources may be organized by date or batch and delivered as multiple files. DSBulk makes it easy to load these “piles” of files into the database efficiently.
+
+- **One-Time Loads and Production Flow:** DSBulk is excellent for one-time loads, such as bringing data into production, or incorporating it as part of a regular data pipeline to ensure smooth data flow.
+
+- **Initial Developer Experience:** When developers need a quick start by loading data from familiar sources, DSBulk can streamline this by importing data from an existing data source into our current environment.
+
+- **Backup Capabilities:** For a quick backup, DSBulk can unload data from a table into a file that can be stored. This is particularly useful for static or reference data that may need occasional backups without complex solutions.
+
+- **Migration or Data Model Changes:** When there’s a need to change the data model, DSBulk simplifies migration. It allows unloading from the current data model and reloading into a new structure, supporting flexible data evolution.
+
+Overall, DSBulk solves many of these issues and is especially useful when working with large data volumes, which would be less efficient with tools like the `COPY` command or `SSTableLoader`.
+
+### How to install
+
+- **Step 1: Download DataStax Bulk Loader**
+  - [DataStax Bulk Loader](https://downloads.datastax.com/#bulk-loader)
+  - [GitHun datastax/dsbulk](https://github.com/datastax/dsbulk)
+
+- **Step 2: Unzip, check %JAVA_HOME% and add into PATH**
+  - Unzip the file `dsbulk-1.11.0.zip`
+  - In cmd prompt, type `echo %JAVA_HOME%` and see if it is installed
+  - Add `c:\dsbulk-1.11.0\bin` in the PATH
+
+- **Step 3: Test the load/unload**
+
+   ```cmd
+   dsbulk load -k test -t student -url C:\\cassandra_data\\student_import.csv
+
+   dsbulk unload -k test -t student -url C:\\cassandra_data\\student_export.csv
+   ```
+
+- **Step 4: More advanced**
+  - [Introduction and Loading](https://www.datastax.com/blog/datastax-bulk-loader-introduction-and-loading)
+  - [Data Samples](https://gist.github.com/brianmhess/8864cf0cb0ce9ea1fd64e579e9f41100)
+
+   ```cmd
+   dsbulk load -url C:\\cassandra_load\\tmp\\dsbulkblog\\iris.csv -k dsbulkblog -t iris_with_id
+
+   dsbulk load -url C:\\cassandra_load\\tmp\\dsbulkblog\\sportsteams.csv -k dsbulkblog -t categories_list
+
+   dsbulk unload -url C:\\cassandra_load\\tmp\\unload -k dsbulkblog -t iris_with_id
+   ```
 
 ### the `datastax/dsbulk` image
 
@@ -567,6 +554,38 @@ If you’d prefer to keep it all within Docker, here’s how to create a simple 
    ```
 
 This custom image setup allows you to use `dsbulk` within Docker similarly to how it’s described in the quick start guides, but with the flexibility to run it as needed without requiring a pre-made image.
+
+### Confirm Port Accessibility
+
+It looks like your Cassandra container is up, with port `9042` mapped. However, if `dsbulk` is still not connecting, here are a couple of troubleshooting steps:
+
+1. **Confirm Port Accessibility**: Sometimes, even if a container shows as "Up," ports may not be accessible on `localhost` or `127.0.0.1`. Try running:
+   ```bash
+   telnet 127.0.0.1 9042
+   ```
+   or, on Linux:
+   ```bash
+   nc -zv 127.0.0.1 9042
+   ```
+   If the port is accessible, you should see a connection confirmation. If not, double-check your Docker network settings.
+
+2. **Restart the Cassandra Container**: Occasionally, Cassandra requires a restart to establish proper connections on all ports. Run:
+   ```bash
+   docker restart cassandra
+   ```
+
+3. **Try Connecting with cqlsh**: This will verify if Cassandra on Docker is reachable. Run:
+   ```bash
+   docker exec -it cassandra cqlsh 127.0.0.1
+   ```
+   If `cqlsh` connects successfully, your Cassandra setup is working, and `dsbulk` should also be able to connect.
+
+Once you’ve confirmed access, retry `dsbulk`:
+```bash
+dsbulk load -h 127.0.0.1 -k test -t student -url C:\\cassandra_data\\student_import.csv
+```
+
+Let me know if you encounter any further issues!
 
 ## Use Cassandra Bulk Loader (cassandra-loader or sstableloader)
 
@@ -1005,3 +1024,10 @@ public Job migrationJob(JobBuilderFactory jobBuilderFactory, StepBuilderFactory 
 
 This process ensures that your data from the legacy system is securely encrypted before being stored in the Cassandra database.
 
+## Videos
+ * [DS210.26 DSE DSBulk | Operations with Apache Cassandra](https://www.youtube.com/watch?v=F-JS6Q6iVyI)
+	> [<img src="https://img.youtube.com/vi/F-JS6Q6iVyI/0.jpg" width="200">](https://www.youtube.com/watch?v=F-JS6Q6iVyI "DatsStax Enterprise DsBulk utility has a lot of power. It is an awesome import tool, specifically built for DataStax Enterprise. Learn more about DsBulk in this unit. by DataStax Developers 2,608 views 3 minutes, 13 seconds")
+
+## References
+1. https://king.host/wiki/artigo/como-liberar-o-uso-do-telnet-no-windows-10/
+2. 
