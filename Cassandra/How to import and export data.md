@@ -17,7 +17,7 @@
     - [How to install](#how-to-install)
     - [the `datastax/dsbulk` image](#the-datastaxdsbulk-image)
     - [Confirm Port Accessibility](#confirm-port-accessibility)
-  - [Use Cassandra Bulk Loader (cassandra-loader or sstableloader)](#use-cassandra-bulk-loader-cassandra-loader-or-sstableloader)
+  - [Use Cassandra Bulk Loader (cassandra-loader or sstableloader) \[1\]](#use-cassandra-bulk-loader-cassandra-loader-or-sstableloader-1)
   - [Spring Batch and Spring Data for Apache Cassandra](#spring-batch-and-spring-data-for-apache-cassandra)
     - [Steps to Insert Data into Cassandra using Spring Batch](#steps-to-insert-data-into-cassandra-using-spring-batch)
     - [Key Points:](#key-points)
@@ -585,9 +585,21 @@ Once you’ve confirmed access, retry `dsbulk`:
 dsbulk load -h 127.0.0.1 -k test -t student -url C:\\cassandra_data\\student_import.csv
 ```
 
+The port used by DSBulk to connect to Cassandra is specified by the -port option in the DSBulk command. For example, to specify port 9876 for the cluster hosts, you would use the following command:
+
+`dsbulk load -url ~/export.csv -k ks1 -t table1 -h '10.200.1.3, 10.200.1.4' -header false -m '0=col1,1=col3' -port 9876 `
+
+Here are some other ports used by Cassandra: 
+- 7000: Default port for cluster communication
+- 7001: Port for SSL-enabled cluster communication
+- 9042: Port for native protocol clients
+- 7199: Port for JMX 
+
+You can configure the internode communication and native protocol ports in the cassandra-yaml file. The JMX port can be configured in cassandra-env.sh.
+
 Let me know if you encounter any further issues!
 
-## Use Cassandra Bulk Loader (cassandra-loader or sstableloader)
+## Use Cassandra Bulk Loader (cassandra-loader or sstableloader) [[1]](https://cassandra.apache.org/doc/stable/cassandra/operating/bulk_loading.html)
 
 - sstableloader is Cassandra's built-in tool for bulk data loading, which is efficient and optimized for large datasets.
   - Convert your data into SSTable format.
