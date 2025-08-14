@@ -5,6 +5,7 @@
   - [Table of Contents](#table-of-contents)
   - [How to install \[1\] \[2\]](#how-to-install-1-2)
   - [Explicitly map the ports](#explicitly-map-the-ports)
+  - [run a container with specific ports](#run-a-container-with-specific-ports)
   - [Data outside the container](#data-outside-the-container)
   - [The --rm flag tells Docker to automatically remove the container when it stops](#the---rm-flag-tells-docker-to-automatically-remove-the-container-when-it-stops)
   - [LOAD DATA WITH CQLSH \[1\]](#load-data-with-cqlsh-1)
@@ -91,6 +92,84 @@ docker run -d --name cassandra -p 7000:7000 -p 7001:7001 -p 7199:7199 -p 9042:90
 ```
 
 Afterward, you should be able to connect with `dsbulk` or `cqlsh` from your host machine at `127.0.0.1:9042`. Let me know if this resolves the issue!
+
+## run a container with specific ports
+
+To run a container with specific ports exposed to the host machine, you can use the `-p` flag in the `docker run` command. For example, running a container with the following ports exposed:
+
+```bash
+docker run -d -p 7001:7001 -p 7199:7199 -p 9042:9042 -p 9160:9160 <container_name>
+```
+
+This will bind the container's internal ports (`7001`, `7199`, `9042`, and `9160`) to the host machine's corresponding ports. You can verify if these ports are accessible from outside the container and the host machine by following these steps:
+
+1. **Check if the Container is Running**:
+   First, ensure the container is running and has the ports exposed:
+
+   ```bash
+   docker ps
+   ```
+
+   This will list the running containers and show the ports mapped between the container and the host. You should see something like:
+
+   ```
+   CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS             PORTS                                          NAMES
+   <container_id>      <image_name>         "/bin/bash"              <time>              Up <time>          0.0.0.0:7001->7001/tcp, 0.0.0.0:7199->7199/tcp, 0.0.0.0:9042->9042/tcp, 0.0.0.0:9160->9160/tcp   <container_name>
+   ```
+
+   This confirms the container ports are mapped to the host.
+
+2. **Check if the Ports are Listening on the Host**:
+   Run the following command on the host machine to check if the specified ports are open and listening:
+
+   ```bash
+   netstat -tuln | grep -E '7001|7199|9042|9160'
+   ```
+
+   or use `ss` if `netstat` is not available:
+
+   ```bash
+   ss -tuln | grep -E '7001|7199|9042|9160'
+   ```
+
+   This will show if the ports are in a `LISTEN` state. You should see something like:
+
+   ```
+   tcp    LISTEN     0      128    0.0.0.0:7001              0.0.0.0:*
+   tcp    LISTEN     0      128    0.0.0.0:7199              0.0.0.0:*
+   tcp    LISTEN     0      128    0.0.0.0:9042              0.0.0.0:*
+   tcp    LISTEN     0      128    0.0.0.0:9160              0.0.0.0:*
+   ```
+
+3. **Test External Connectivity**:
+   You can now test if these ports are accessible externally. Use `nc`, `telnet`, or a browser for HTTP-based ports:
+
+   ```bash
+   # Using netcat (for any protocol)
+   nc -zv <host_ip> 7001
+   nc -zv <host_ip> 7199
+   nc -zv <host_ip> 9042
+   nc -zv <host_ip> 9160
+   ```
+
+   If you're testing HTTP or web-based services, use `curl` to check if the ports respond:
+
+   ```bash
+   curl http://<host_ip>:7001
+   curl http://<host_ip>:7199
+   curl http://<host_ip>:9042
+   curl http://<host_ip>:9160
+   ```
+
+4. **Check Kubernetes Port Availability (if applicable)**:
+   If your Docker container is part of a Kubernetes pod or running within the cluster, use `kubectl` to check for the port mappings within Kubernetes, and whether the container is exposed externally (via `NodePort` or `LoadBalancer`):
+
+   ```bash
+   kubectl get pods -o wide
+   kubectl get svc -o wide
+   ```
+
+If all these steps confirm that the ports are open and responding on the host machine, then your container ports are successfully exposed to the outside. Let me know if you need more assistance!
 
 ## Data outside the container
 
